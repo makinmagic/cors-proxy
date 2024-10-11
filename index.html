@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CORS Proxy</title>
+</head>
+<body>
+    <script>
+        // Get the URL from the query string
+        const urlParams = new URLSearchParams(window.location.search);
+        const targetUrl = urlParams.get('url');
+
+        if (targetUrl) {
+            fetch(targetUrl)
+                .then(response => {
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    return response.blob(); // Convert response to a Blob
+                })
+                .then(imageBlob => {
+                    const imageObjectURL = URL.createObjectURL(imageBlob); // Create a URL for the Blob
+                    const img = document.createElement('img');
+                    img.src = imageObjectURL; // Set the image source to the Blob URL
+                    document.body.appendChild(img); // Append the image to the body
+                })
+                .catch(error => {
+                    console.error('Error fetching the URL:', error);
+                    document.body.innerText = 'Error fetching the resource.';
+                });
+        } else {
+            document.body.innerText = 'No URL specified.';
+        }
+    </script>
+</body>
+</html>
